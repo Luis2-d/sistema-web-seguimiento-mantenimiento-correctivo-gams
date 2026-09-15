@@ -1,0 +1,5 @@
+<?php
+namespace App\Models;
+use App\Models\Concerns\HasSpanishDatabase;
+use Illuminate\Database\Eloquent\Model;
+class TicketStatusHistory extends Model { use HasSpanishDatabase; protected $table='historial_estados_solicitud'; protected $fillable=['ticket_id','changed_by','from_status','to_status','comment']; protected array $attributeMap=['ticket_id'=>'solicitud_id','changed_by'=>'modificado_por','from_status'=>'estado_anterior','to_status'=>'estado_nuevo','comment'=>'comentario']; protected array $valueMap=['from_status'=>['pending'=>'pendiente','diagnosis'=>'diagnostico','waiting_parts'=>'espera_repuestos','in_progress'=>'en_progreso','resolved'=>'solucionado','closed'=>'cerrado','cancelled'=>'cancelado'],'to_status'=>['pending'=>'pendiente','diagnosis'=>'diagnostico','waiting_parts'=>'espera_repuestos','in_progress'=>'en_progreso','resolved'=>'solucionado','closed'=>'cerrado','cancelled'=>'cancelado']]; public function ticket(){return $this->belongsTo(Ticket::class,'solicitud_id');} public function user(){return $this->belongsTo(User::class,'modificado_por');} }

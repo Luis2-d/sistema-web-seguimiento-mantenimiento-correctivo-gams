@@ -1,0 +1,5 @@
+<?php
+namespace App\Models;
+use App\Models\Concerns\HasSpanishDatabase;
+use Illuminate\Database\Eloquent\Model;
+class Intervention extends Model { use HasSpanishDatabase; protected $table='intervenciones'; protected $fillable=['ticket_id','technician_id','service_type','diagnosis','solution','conformity_notes','performed_at']; protected array $attributeMap=['ticket_id'=>'solicitud_id','technician_id'=>'tecnico_id','service_type'=>'tipo_servicio','diagnosis'=>'diagnostico','solution'=>'solucion','conformity_notes'=>'observaciones_conformidad','performed_at'=>'realizado_en']; protected array $valueMap=['service_type'=>['hardware'=>'hardware','software'=>'software','connectivity'=>'conectividad']]; protected $casts=['realizado_en'=>'datetime']; public function ticket(){return $this->belongsTo(Ticket::class,'solicitud_id');} public function technician(){return $this->belongsTo(User::class,'tecnico_id');} public function spareParts(){return $this->belongsToMany(SparePart::class,'intervencion_repuesto','intervencion_id','repuesto_id')->withPivot(['cantidad','observaciones'])->withTimestamps();} }

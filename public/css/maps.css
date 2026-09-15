@@ -1,0 +1,133 @@
+.school-map {
+    min-height: 360px;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid #d9e2ec;
+    border-radius: .65rem;
+    background: #eef3f8;
+}
+
+.school-map--overview {
+    min-height: 620px;
+}
+
+.map-status {
+    min-height: 1.25rem;
+}
+
+.map-route-panel {
+    margin-bottom: .75rem;
+    padding: 1rem;
+    border: 1px solid #c7dfd0;
+    border-left: 4px solid #176b3a;
+    border-radius: .65rem;
+    background: #f1f8f3;
+    color: #183b2b;
+    overflow-wrap: anywhere;
+}
+
+.map-route-panel h2 {
+    color: #176b3a;
+    font-weight: 700;
+}
+
+.map-route-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.school-map.map-pick-origin {
+    cursor: crosshair;
+}
+
+.map-placeholder {
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 1.5rem;
+    text-align: center;
+    color: #64748b;
+    border: 1px dashed #b8c4d1;
+    border-radius: .65rem;
+    background: #f8fafc;
+}
+
+.map-location-list {
+    max-height: 545px;
+    overflow-y: auto;
+    padding-right: .25rem;
+}
+
+.map-location-item {
+    padding: .85rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.map-location-focus {
+    display: flex;
+    width: 100%;
+    gap: .75rem;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #1f2937;
+}
+
+.map-location-focus:hover strong,
+.map-location-focus:focus strong {
+    color: #0056b3;
+}
+
+.map-location-icon {
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e7f1ff;
+    color: #0d6efd;
+}
+
+.map-toolbar {
+    display: flex;
+    gap: .5rem;
+    align-items: stretch;
+}
+
+.map-toolbar .form-control {
+    min-width: 0;
+}
+
+.coordinates-panel {
+    padding: .85rem;
+    border: 1px solid #e2e8f0;
+    border-radius: .5rem;
+    background: #f8fafc;
+}
+
+@media (max-width: 991.98px) {
+    .school-map--overview {
+        min-height: 480px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .map-route-actions .btn {
+        flex: 1 1 100%;
+    }
+
+    .map-toolbar {
+        flex-direction: column;
+    }
+
+    .school-map,
+    .school-map--overview {
+        min-height: 320px;
+    }
+}

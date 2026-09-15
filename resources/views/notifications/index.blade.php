@@ -1,0 +1,4 @@
+@extends('adminlte::page')
+@section('title','Notificaciones')
+@section('content_header')<div class="d-flex justify-content-between"><h1>Notificaciones</h1><form method="POST" action="{{ route('notifications.read-all') }}">@csrf @method('PATCH')<button class="btn btn-outline-primary">Marcar todas como leídas</button></form></div>@stop
+@section('content')@include('partials.flash')<div class="card"><div class="list-group list-group-flush">@forelse($notifications as $n)<a href="{{ route('notifications.read',$n->id) }}" class="list-group-item list-group-item-action {{ $n->read_at?'':'bg-light' }}"><div class="d-flex justify-content-between"><span><i class="fas fa-bell text-primary mr-2"></i>{{ $n->data['message'] }}</span><small class="text-muted">{{ $n->created_at->diffForHumans() }}</small></div></a>@empty<div class="p-4 text-center text-muted">No hay notificaciones.</div>@endforelse</div></div>{{ $notifications->links() }}@stop

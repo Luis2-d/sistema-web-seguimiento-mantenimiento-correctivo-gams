@@ -1,0 +1,6 @@
+<?php
+namespace App\Http\Controllers;
+use App\Models\{School,User};
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+class UserController extends Controller { public function index(){return view('users.index',['users'=>User::with('school')->orderBy('name')->paginate(15)]);} public function create(){return view('users.form',['item'=>new User,'schools'=>School::where('activo',true)->orderBy('nombre')->get()]);} public function store(Request $r){User::create($this->data($r));return redirect()->route('users.index')->with('success','Usuario registrado.');} public function edit(User $user){return view('users.form',['item'=>$user,'schools'=>School::where('activo',true)->orderBy('nombre')->get()]);} public function update(Request $r,User $user){$data=$this->data($r,$user);if(empty($data['password']))unset($data['password']);$user->update($data);return redirect()->route('users.index')->with('success','Usuario actualizado.');} private function data(Request $r,?User $u=null){$rules=['name'=>'required|max:150','email'=>['required','email',Rule::unique('users')->ignore($u)],'phone'=>'nullable|max:30','role'=>'required|in:admin,technician,director','school_id'=>'nullable|required_if:role,director|exists:unidades_educativas,id','active'=>'required|boolean','password'=>[$u?'nullable':'required','confirmed','min:8']];return $r->validate($rules);} }
