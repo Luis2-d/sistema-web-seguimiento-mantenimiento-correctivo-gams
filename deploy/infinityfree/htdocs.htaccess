@@ -4,6 +4,13 @@ RewriteEngine On
 
 # Bloquear archivos privados incluso si se solicitan con rutas directas.
 RewriteRule (^|/)\. - [F,L]
+
+# La URL /vendor tambien contiene CSS, JS, fuentes e imagenes publicados.
+# Permitir solo archivos estaticos que existan realmente en public/vendor.
+# El resto de /vendor sigue bloqueado para proteger las dependencias PHP.
+RewriteCond %{DOCUMENT_ROOT}/public/vendor/$1 -f
+RewriteRule ^vendor/(.+\.(?:css|js|woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico|map))$ public/vendor/$1 [L,NC]
+
 RewriteRule ^(?:app|bootstrap|config|database|lang|resources|routes|vendor)(?:/|$) - [F,L,NC]
 RewriteRule ^storage(?:/|$) - [F,L,NC]
 RewriteRule ^(?:artisan|composer\.(?:json|lock)|package(?:-lock)?\.json|phpunit\.xml|vite\.config\..*)$ - [F,L,NC]

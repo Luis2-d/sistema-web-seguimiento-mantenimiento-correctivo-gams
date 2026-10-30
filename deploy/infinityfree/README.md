@@ -50,6 +50,16 @@ La contraseña se solicita de forma oculta y se guarda localmente. No enviarla p
 
 Si aparece error 500, revisar `storage/logs/laravel.log` mediante FTP, sin publicar su contenido. Comprobar que `storage` y `bootstrap/cache` sean escribibles y que no falten archivos. No activar depuración públicamente para la entrega.
 
+Para comprobar con Apache local el acceso al login, CSS, JavaScript y fuentes,
+y el bloqueo de los archivos privados, ejecutar desde la raíz del proyecto:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File deploy/infinityfree/verificar-apache.ps1
+```
+
+La regla de entrada debe permitir los archivos estáticos existentes de
+`public/vendor` sin exponer las dependencias PHP de la carpeta `vendor` privada.
+
 ## Actualizaciones
 
 Preparar una nueva copia con el script; configurar sus datos y subir los archivos actualizados. Los CSS/JS de Vite se recompilan. Conservar el `.env` de producción, la base del hosting y sus archivos de usuario. Tras cambios de esquema, aplicar solamente los cambios SQL necesarios, con respaldo previo. InfinityFree no sincroniza automáticamente este repositorio.

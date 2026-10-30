@@ -1,6 +1,8 @@
-# Sistema de seguimiento de mantenimiento correctivo
+# SISTEMA WEB DE SEGUIMIENTO DEL MANTENIMIENTO CORRECTIVO DE EQUIPOS TECNOLOGICOS PARA LA JEFATURA DE EDUCACION DEL G.A.M.S
 
 Aplicación Laravel 12 para la Jefatura de Educación del Gobierno Autónomo Municipal de Sacaba. Digitaliza solicitudes de soporte, seguimiento por estados, intervenciones técnicas, equipos, repuestos, alertas internas e historial técnico.
+
+Aplicación publicada: [seguimiento-tecnologico1.infy.click](https://seguimiento-tecnologico1.infy.click).
 
 ## Requisitos
 
@@ -15,8 +17,8 @@ Aplicación Laravel 12 para la Jefatura de Educación del Gobierno Autónomo Mun
 Clona el proyecto e instala las dependencias PHP desde su carpeta:
 
 ```bash
-git clone https://github.com/Luis2-d/Gestion_de_seguimiento_APIS-.git
-cd Gestion_de_seguimiento_APIS-
+git clone https://github.com/Luis2-d/sistema-web-seguimiento-mantenimiento-correctivo-gams.git
+cd sistema-web-seguimiento-mantenimiento-correctivo-gams
 composer install
 php -r "file_exists('.env') || copy('.env.example', '.env');"
 ```
