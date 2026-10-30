@@ -40,7 +40,11 @@
                     <div class="col-md-4"><strong>Categoría</strong><br>{{ $ticket->category === 'connectivity' ? 'Conectividad' : ucfirst($ticket->category) }}</div>
                     <div class="col-md-4"><strong>Prioridad</strong><br>{{ ['low'=>'Baja','medium'=>'Media','high'=>'Alta','critical'=>'Crítica'][$ticket->priority] ?? $ticket->priority }}</div>
                 </div>
-                @if($ticket->equipment)<hr><strong>Equipo:</strong> {{ $ticket->equipment->asset_code }} · {{ $ticket->equipment->brand }} {{ $ticket->equipment->model }}@endif
+                @if($ticket->equipment)
+                    <hr><strong>Equipo:</strong> {{ $ticket->equipment->asset_code }} · {{ $ticket->equipment->brand }} {{ $ticket->equipment->model }}
+                @elseif($ticket->equipment_brand)
+                    <hr><strong>Marca del equipo:</strong> {{ $ticket->equipment_brand }}
+                @endif
             </div>
         </div>
 

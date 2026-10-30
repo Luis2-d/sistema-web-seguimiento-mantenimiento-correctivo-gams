@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Intervention, SparePart, Ticket, TicketStatusHistory};
+use App\Models\Intervention;
+use App\Models\SparePart;
+use App\Models\Ticket;
+use App\Models\TicketStatusHistory;
 use App\Notifications\TicketEventNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,9 +23,9 @@ class InterventionController extends Controller
 
         $data = $request->validate([
             'service_type' => 'required|in:hardware,software,connectivity',
-            'diagnosis' => 'required|max:5000',
-            'solution' => 'required|max:5000',
-            'conformity_notes' => 'nullable|max:3000',
+            'diagnosis' => 'required|string|max:5000',
+            'solution' => 'required|string|max:5000',
+            'conformity_notes' => 'nullable|string|max:3000',
             'performed_at' => 'required|date',
             'spare_part_id' => 'nullable|exists:repuestos,id',
             'quantity' => 'nullable|integer|min:1',
@@ -33,7 +36,7 @@ class InterventionController extends Controller
         $previousStatus = $ticket->status;
 
         DB::transaction(function () use ($data, $request, $ticket, $newStatus, $previousStatus) {
-            if ($request->user()->isTechnician() && !$ticket->assigned_to) {
+            if ($request->user()->isTechnician() && ! $ticket->assigned_to) {
                 $ticket->update(['assigned_to' => $request->user()->id]);
             }
 
@@ -43,7 +46,7 @@ class InterventionController extends Controller
                 'technician_id' => $request->user()->id,
             ]);
 
-            if (!empty($data['spare_part_id'])) {
+            if (! empty($data['spare_part_id'])) {
                 $part = SparePart::lockForUpdate()->findOrFail($data['spare_part_id']);
                 $quantity = $data['quantity'] ?? 1;
                 abort_if($part->stock < $quantity, 422, 'Stock insuficiente.');
@@ -68,9 +71,7 @@ class InterventionController extends Controller
                 ]);
             }
 
-            if ($newStatus === 'resolved') {
-                $ticket->equipment?->update(['status' => 'operational']);
-            }
+            $ticket->equipment?->syncMaintenanceStatus($newStatus === 'resolved');
         });
 
         $ticket->refresh();

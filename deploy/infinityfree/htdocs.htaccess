@@ -1,0 +1,13 @@
+# InfinityFree: solo public/ debe atender solicitudes web.
+Options -Indexes
+RewriteEngine On
+
+# Bloquear archivos privados incluso si se solicitan con rutas directas.
+RewriteRule (^|/)\. - [F,L]
+RewriteRule ^(?:app|bootstrap|config|database|lang|resources|routes|vendor)(?:/|$) - [F,L,NC]
+RewriteRule ^storage(?:/|$) - [F,L,NC]
+RewriteRule ^(?:artisan|composer\.(?:json|lock)|package(?:-lock)?\.json|phpunit\.xml|vite\.config\..*)$ - [F,L,NC]
+
+# Evitar volver a anteponer public/ durante una reescritura interna.
+RewriteRule ^public(?:/|$) - [L]
+RewriteRule ^(.*)$ public/$1 [L]

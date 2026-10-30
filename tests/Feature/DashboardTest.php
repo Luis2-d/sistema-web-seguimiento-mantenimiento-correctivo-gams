@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\School;
+use App\Models\TechnicalVisit;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -89,7 +90,59 @@ class DashboardTest extends TestCase
             ->assertViewHas('monthlyActivity', fn ($months) => $months->count() === 6 && $months->sum('created') === 0)
             ->assertSee('El seguimiento comienza aquí')
             ->assertSee('Sin casos prioritarios')
+            ->assertSee('Tu agenda está libre')
             ->assertDontSee('NaN');
+    }
+
+    public function test_agenda_shows_the_next_four_active_visits_in_local_time_including_visits_in_progress(): void
+    {
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-02 14:00:00', 'UTC'));
+        $admin = User::factory()->create(['role' => 'admin']);
+        $technician = User::factory()->create(['role' => 'technician']);
+        $school = School::create(['name' => 'Unidad con visitas']);
+        $ticket = $this->ticket($school, $admin, ['code' => 'AGENDA']);
+        $makeVisit = fn ($start, $end, $state = 'programada') => TechnicalVisit::create([
+            'solicitud_id' => $ticket->id, 'tecnico_id' => $technician->id,
+            'inicio' => $start, 'fin' => $end, 'estado' => $state,
+        ]);
+        $makeVisit('2026-10-02 12:00:00', '2026-10-02 13:00:00');
+        $makeVisit('2026-10-02 14:00:00', '2026-10-02 15:00:00', 'cancelada');
+        $later = $makeVisit('2026-10-04 15:00:00', '2026-10-04 16:00:00');
+        $current = $makeVisit('2026-10-02 13:30:00', '2026-10-02 14:30:00');
+        $next = $makeVisit('2026-10-02 15:00:00', '2026-10-02 16:00:00');
+        $tomorrow = $makeVisit('2026-10-03 15:00:00', '2026-10-03 16:00:00');
+        $makeVisit('2026-10-05 15:00:00', '2026-10-05 16:00:00');
+
+        $this->actingAs($admin)->get('/inicio')->assertOk()
+            ->assertViewHas('upcomingVisits', fn ($visits) => $visits->modelKeys() === [$current->id, $next->id, $tomorrow->id, $later->id])
+            ->assertSee('09:30')->assertSee('11:00')->assertSee('En curso')->assertSee('Hoy')
+            ->assertSeeInOrder(['Solicitudes prioritarias', 'Próximas visitas', 'Últimas solicitudes', 'Evolución de solicitudes']);
+    }
+
+    public function test_agenda_respects_school_and_technician_visibility(): void
+    {
+        $school = School::create(['name' => 'Unidad propia']);
+        $otherSchool = School::create(['name' => 'Otra unidad']);
+        $director = User::factory()->create(['role' => 'director', 'school_id' => $school->id]);
+        $technician = User::factory()->create(['role' => 'technician']);
+        $otherTechnician = User::factory()->create(['role' => 'technician']);
+        $ownTicket = $this->ticket($school, $director, ['code' => 'VISITA-PROPIA', 'assigned_to' => $technician->id]);
+        $otherTicket = $this->ticket($otherSchool, $director, ['code' => 'VISITA-AJENA', 'assigned_to' => $otherTechnician->id]);
+        $unassigned = $this->ticket($school, $director, ['code' => 'VISITA-SIN-ASIGNAR']);
+        $makeVisit = fn ($ticket, $owner) => TechnicalVisit::create([
+            'solicitud_id' => $ticket->id, 'tecnico_id' => $owner->id,
+            'inicio' => now('UTC')->addDay(), 'fin' => now('UTC')->addDay()->addHour(),
+        ]);
+        $ownVisit = $makeVisit($ownTicket, $technician);
+        $otherVisit = $makeVisit($otherTicket, $otherTechnician);
+        $unassignedVisit = $makeVisit($unassigned, $otherTechnician);
+
+        $this->actingAs($director)->get('/inicio')->assertOk()
+            ->assertViewHas('upcomingVisits', fn ($visits) => $visits->modelKeys() === [$ownVisit->id, $unassignedVisit->id]);
+        $this->actingAs($technician)->get('/inicio')->assertOk()
+            ->assertViewHas('upcomingVisits', fn ($visits) => $visits->modelKeys() === [$ownVisit->id]);
+        $this->actingAs($otherTechnician)->get('/inicio')->assertOk()
+            ->assertViewHas('upcomingVisits', fn ($visits) => $visits->modelKeys() === [$otherVisit->id, $unassignedVisit->id]);
     }
 
     private function ticket(School $school, User $requester, array $overrides): Ticket

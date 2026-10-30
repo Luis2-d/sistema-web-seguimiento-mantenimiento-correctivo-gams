@@ -23,16 +23,6 @@ class SchoolMapController extends Controller
 
         if ($user->isDirector()) {
             $query->whereKey($user->school_id);
-        } elseif ($user->isTechnician()) {
-            $query->whereHas('tickets', function ($tickets) use ($user, $openStatuses) {
-                $tickets
-                    ->whereIn('estado', $openStatuses)
-                    ->where(function ($assignment) use ($user) {
-                        $assignment
-                            ->where('tecnico_asignado_id', $user->id)
-                            ->orWhereNull('tecnico_asignado_id');
-                    });
-            });
         }
 
         $schools = $query->orderBy('nombre')->get();

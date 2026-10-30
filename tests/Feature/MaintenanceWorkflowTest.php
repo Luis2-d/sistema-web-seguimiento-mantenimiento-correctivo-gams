@@ -70,7 +70,7 @@ class MaintenanceWorkflowTest extends TestCase
 
         $this->actingAs($admin)->get('/panel')
             ->assertOk()
-            ->assertSee('Panel de seguimiento')
+            ->assertSee('Centro de trabajo')
             ->assertSee('TCK-PANEL')
             ->assertSee('Equipo registrado en el panel principal');
     }

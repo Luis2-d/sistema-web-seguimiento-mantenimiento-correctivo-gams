@@ -49,8 +49,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/repuestos', [SparePartController::class, 'store'])->name('spare-parts.store');
         Route::put('/repuestos/{sparePart}', [SparePartController::class, 'update'])->name('spare-parts.update');
     });
+    Route::get('/unidades-educativas', [SchoolController::class, 'index'])
+        ->middleware('role:admin,technician')->name('schools.index');
     Route::middleware('role:admin')->group(function () {
-        Route::get('/unidades-educativas', [SchoolController::class, 'index'])->name('schools.index');
         Route::get('/unidades-educativas/crear', [SchoolController::class, 'create'])->name('schools.create');
         Route::post('/unidades-educativas', [SchoolController::class, 'store'])->name('schools.store');
         Route::get('/unidades-educativas/{school}/editar', [SchoolController::class, 'edit'])->name('schools.edit');

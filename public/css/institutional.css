@@ -23,6 +23,13 @@ body{font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--text);background:
 .institutional-brand .brand-text{display:flex;flex-direction:column;line-height:1.05;color:#fff!important;overflow:visible}
 .institutional-brand .brand-title{font-weight:800;letter-spacing:2px;font-size:1.05rem}.institutional-brand small{font-size:.68rem;color:#b9d5c2;margin-top:4px;font-weight:500;letter-spacing:.3px}
 .main-sidebar{width:260px}.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover){width:4.6rem}.sidebar{padding:1rem .65rem}
+/* El menú fijo ocupa el espacio restante debajo del logotipo. */
+.layout-fixed .wrapper .main-sidebar .sidebar {
+    height: calc(100vh - 64px);
+    height: calc(100dvh - 64px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+}
 .nav-sidebar>.nav-header{font-size:.65rem;letter-spacing:1.25px;color:#a6c9b0!important;padding:1.2rem .8rem .5rem;font-weight:700}
 .nav-sidebar>.nav-item>.nav-link{margin:.18rem 0;border-radius:9px;color:#d5e5da;padding:.72rem .85rem;font-size:.9rem;transition:.18s ease}
 .nav-sidebar>.nav-item>.nav-link:hover{background:rgba(255,255,255,.07);color:#fff;transform:translateX(2px)}
@@ -100,3 +107,40 @@ a.text-primary:hover, a.text-primary:focus { color: var(--brand-primary-hover) !
     color: var(--brand-primary);
 }
 @media(max-width:767.98px){.content-header{padding:1.2rem 1rem .7rem}.content{padding:0 1rem}.content-header .d-flex{align-items:flex-start!important;gap:.7rem}.content-header h1{font-size:1.35rem}.login-box{width:calc(100% - 32px)}.metric-card{margin-bottom:.9rem}}
+
+/* Ajustes compartidos para celulares y tablets. */
+@media (min-width: 768px) {
+    body:not(.sidebar-collapse) .content-wrapper,
+    body:not(.sidebar-collapse) .main-header,
+    body:not(.sidebar-collapse) .main-footer { margin-left: 260px; }
+}
+@media (max-width: 767.98px) {
+    .main-sidebar, .main-sidebar::before,
+    .sidebar-collapse .main-sidebar, .sidebar-collapse .main-sidebar::before { margin-left: -260px; }
+    .sidebar-open .main-sidebar, .sidebar-open .main-sidebar::before { margin-left: 0; }
+    .content-wrapper, .main-header, .main-footer { margin-left: 0 !important; }
+}
+@media (max-width: 767.98px) {
+    .content-header > .container-fluid > .d-flex { flex-wrap: wrap; }
+    .content-header .d-flex > div { min-width: 0; }
+    .content-header h1, .card-title { overflow-wrap: anywhere; }
+    .content-wrapper > .content { padding-right: .75rem; padding-left: .75rem; }
+    .institutional-navbar { padding-right: .5rem; padding-left: .5rem; }
+    .main-header .user-menu > .nav-link { display: flex; align-items: center; max-width: 45vw; }
+    .main-header .user-menu > .nav-link > span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .main-header .dropdown-menu { min-width: 0; max-width: calc(100vw - 24px); }
+    .content .card-body, .content .card-header, .content .card-footer { padding: 1rem; }
+    .content form.row > [class*="col-"] { margin-bottom: .5rem; }
+    .content .btn, .login-box .btn, .register-box .btn { min-height: 44px; }
+    .content .form-control, .login-box .form-control, .register-box .form-control { font-size: 16px; }
+    .table-responsive { max-width: 100%; }
+    .table-responsive:focus-visible { outline: 3px solid var(--brand-primary-light); outline-offset: -3px; }
+    .table-responsive .table th { white-space: nowrap; }
+    .pagination { flex-wrap: wrap; gap: .25rem; }
+    .login-box, .register-box { max-width: 420px; width: calc(100% - 32px); margin: 1rem auto; }
+    .institutional-auth-card .card-header, .institutional-auth-card .card-body, .institutional-auth-card .card-footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+}
+@media (max-width: 575.98px) {
+    .content-header > .container-fluid > .d-flex > .btn { width: 100%; }
+    .login-card-body form > .row > div + div { margin-top: .75rem; }
+}

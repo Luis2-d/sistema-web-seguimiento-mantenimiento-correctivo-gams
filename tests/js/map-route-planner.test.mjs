@@ -38,7 +38,7 @@ function element() {
     };
 }
 
-function setup(t) {
+function setup(t, { secureContext = true, hasGeolocation = true } = {}) {
     const controls = Object.fromEntries(['destination', 'status', 'summary', 'pick', 'current', 'clear']
         .map((name) => [name, element()]));
     const panel = element();
@@ -86,7 +86,7 @@ function setup(t) {
         getCurrentPosition(success, failure) { positionRequests.push({ success, failure }); },
     };
     const fetchMock = t.mock.method(globalThis, 'fetch', async () => routeResponse());
-    const planner = initializeRoutePlanner({ L, map, mapElement, panel, apiKey: 'clave-de-prueba', geolocation });
+    const planner = initializeRoutePlanner({ L, map, mapElement, panel, apiKey: 'clave-de-prueba', geolocation: hasGeolocation ? geolocation : null, secureContext });
     return { planner, panel, controls, map, mapElement, groups, drawn, positionRequests, fetchMock };
 }
 
@@ -192,3 +192,35 @@ test('cerrar la ruta cancela la consulta y evita dibujar una respuesta tardía',
     assert.equal(view.drawn.length, 0);
     assert.ok(view.groups.every((group) => group.layers.length === 0));
 });
+
+// Por HTTP se debe explicar el bloqueo y conservar la selección manual.
+test('por HTTP explica el bloqueo y calcula la ruta al tocar el mapa', async (t) => {
+    const view = setup(t, { secureContext: false });
+    view.planner.start(firstSchool);
+    assert.equal(view.positionRequests.length, 0);
+    assert.match(view.controls.status.textContent, /HTTPS/);
+    assert.equal(view.mapElement.classList.contains('map-pick-origin'), true);
+    view.map.click({ lat: origin.latitude, lng: origin.longitude });
+    await settle();
+    assert.deepEqual(view.drawn.at(-1).points, firstPoints);
+});
+
+test('sin soporte de ubicación mantiene disponible la selección manual', (t) => {
+    const view = setup(t, { hasGeolocation: false });
+    view.planner.start(firstSchool);
+    assert.match(view.controls.status.textContent, /Este navegador/);
+    assert.equal(view.controls.pick.getAttribute('aria-pressed'), 'true');
+});
+
+for (const [code, message] of [[1, /bloqueado/], [2, /activada/], [3, /tiempo de espera/]]) {
+    test('explica el fallo de ubicación ' + code + ' y permite reintentar', (t) => {
+        const view = setup(t);
+        view.planner.start(firstSchool);
+        view.positionRequests[0].failure({ code });
+        assert.match(view.controls.status.textContent, message);
+        assert.equal(view.controls.pick.getAttribute('aria-pressed'), 'true');
+        view.controls.current.click();
+        assert.equal(view.positionRequests.length, 2);
+        assert.equal(view.controls.pick.getAttribute('aria-pressed'), 'false');
+    });
+}

@@ -41,7 +41,7 @@ function createMap(element, center, zoom) {
     });
     const key = encodeURIComponent(config.apiKey);
     // TomTom envía el mapa por imágenes: z indica el zoom; x e y, la pieza solicitada.
-    const tileLayer = L.tileLayer(
+    const streetLayer = L.tileLayer(
         `https://api.tomtom.com/maps/orbis/display/raster/tile/{z}/{x}/{y}?apiVersion=2&style=street-light&key=${key}`,
         {
             maxZoom: 22,
@@ -50,14 +50,37 @@ function createMap(element, center, zoom) {
         },
     );
 
-    let tileErrorShown = false;
-    tileLayer.on('tileerror', () => {
-        if (!tileErrorShown) {
-            setStatus('TomTom no pudo cargar el mapa. Verifica la clave y los servicios habilitados.', true);
-            tileErrorShown = true;
-        }
+    const layers = [streetLayer];
+
+    if (config.mode === 'overview') {
+        const satelliteLayer = L.tileLayer(
+            `https://api.tomtom.com/maps/orbis/display/satellite/tile/{z}/{x}/{y}?apiVersion=2&key=${key}`,
+            {
+                maxNativeZoom: 19,
+                maxZoom: 22,
+                tileSize: 256,
+                attribution: '&copy; <a href="https://www.tomtom.com/">TomTom</a> &copy; <a href="https://www.maxar.com/">Maxar</a>',
+            },
+        );
+        layers.push(satelliteLayer);
+        L.control.layers({ 'Satélite': satelliteLayer, 'Calles': streetLayer }, null, {
+            collapsed: false,
+            position: 'topright',
+        }).addTo(map);
+    }
+
+    layers.forEach((layer) => {
+        let tileErrorShown = false;
+        layer.on('tileerror', () => {
+            if (map.hasLayer(layer) && !tileErrorShown) {
+                setStatus(layer === streetLayer
+                    ? 'No se pudo cargar el mapa de calles. Inténtalo nuevamente más tarde.'
+                    : 'No se pudo cargar la vista satelital. Puedes seleccionar Calles para continuar.', true);
+                tileErrorShown = true;
+            }
+        });
     });
-    tileLayer.addTo(map);
+    layers[layers.length - 1].addTo(map);
 
     return map;
 }

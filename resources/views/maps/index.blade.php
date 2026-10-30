@@ -11,13 +11,13 @@
     <div>
         <span class="text-uppercase text-primary small font-weight-bold">Ubicación y rutas</span>
         <h1 class="mb-1">Mapa de unidades educativas</h1>
-        <p class="text-muted mb-0">Consulta los puntos registrados y abre la ruta para llegar.</p>
+        <p class="text-muted mb-0">Explora las unidades en vista satelital y consulta la ruta para llegar.</p>
     </div>
-    @if(auth()->user()->isAdmin())
+    @can('staff')
         <a href="{{ route('schools.index') }}" class="btn btn-outline-primary mt-2 mt-md-0">
-            <i class="fas fa-school mr-1"></i> Administrar unidades
+            <i class="fas fa-school mr-1"></i> Ver unidades educativas
         </a>
-    @endif
+    @endcan
 </div>
 @stop
 
@@ -66,7 +66,7 @@
                     <div
                         id="school-overview-map"
                         class="school-map school-map--overview"
-                        aria-label="Mapa con las unidades educativas"
+                        aria-label="Mapa de unidades educativas con selector de vista satelital o calles"
                     ></div>
                     <p class="map-status small text-muted mt-2 mb-0" data-map-status aria-live="polite">
                         @if($locations->isNotEmpty())
@@ -118,7 +118,7 @@
                                     <small class="text-muted">{{ $location['address'] ?: 'Sin dirección escrita' }}</small>
                                 </span>
                             </button>
-                            <div class="d-flex justify-content-between align-items-center mt-2 pl-5">
+                            <div class="map-location-actions">
                                 <span class="badge badge-{{ $location['openTickets'] ? 'warning' : 'success' }}">
                                     {{ $location['openTickets'] }} solicitudes abiertas
                                 </span>

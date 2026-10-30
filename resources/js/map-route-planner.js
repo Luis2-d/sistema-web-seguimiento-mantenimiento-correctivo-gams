@@ -1,6 +1,6 @@
 import { calculateTomTomRoute } from './tomtom-routing.js';
 
-export function initializeRoutePlanner({ L, map, mapElement, panel, apiKey, geolocation = globalThis.navigator?.geolocation }) {
+export function initializeRoutePlanner({ L, map, mapElement, panel, apiKey, geolocation = globalThis.navigator?.geolocation, secureContext = globalThis.isSecureContext !== false }) {
     if (!panel) return null;
 
     const destinationLabel = panel.querySelector('[data-route-destination]');
@@ -45,7 +45,7 @@ export function initializeRoutePlanner({ L, map, mapElement, panel, apiKey, geol
         }).bindTooltip(label).addTo(layers);
     }
 
-    function chooseOnMap(message = 'Haz clic en el mapa para elegir desde dónde sales.') {
+    function chooseOnMap(message = 'Toca el mapa para elegir desde dónde sales.') {
         if (!destination) return;
         cancelPending();
         origin = null;
@@ -113,16 +113,25 @@ export function initializeRoutePlanner({ L, map, mapElement, panel, apiKey, geol
         setChoosingOrigin(false);
         clearDrawing();
         markDestination();
+        if (!secureContext) {
+            chooseOnMap('La ubicación automática requiere una conexión HTTPS. Al abrir esta página por una IP con HTTP, el navegador la bloquea. Toca el mapa para indicar desde dónde sales.');
+            return;
+        }
         if (!geolocation) {
-            chooseOnMap('Tu ubicación no está disponible. Elige el punto de partida haciendo clic en el mapa.');
+            chooseOnMap('Este navegador no ofrece acceso a tu ubicación. Toca el mapa para indicar desde dónde sales.');
             return;
         }
 
         const requestVersion = version;
         setStatus('Buscando tu ubicación. Permite el acceso si el navegador lo solicita.');
-        const unavailable = () => {
+        const unavailable = (error) => {
             if (requestVersion !== version) return;
-            chooseOnMap('No se pudo obtener tu ubicación. Haz clic en el mapa para indicar desde dónde sales.');
+            const messages = {
+                1: 'El acceso a tu ubicación está bloqueado. Permite la ubicación en los ajustes del navegador y vuelve a pulsar Mi ubicación.',
+                2: 'El dispositivo no pudo determinar tu ubicación. Comprueba que la ubicación del celular esté activada.',
+                3: 'Se agotó el tiempo de espera de tu ubicación. Vuelve a pulsar Mi ubicación para intentarlo otra vez.',
+            };
+            chooseOnMap(`${messages[error?.code] || 'No se pudo obtener tu ubicación.'} También puedes tocar el mapa para indicar desde dónde sales.`);
         };
 
         try {
@@ -131,8 +140,8 @@ export function initializeRoutePlanner({ L, map, mapElement, panel, apiKey, geol
                 if (requestVersion !== version) return;
                 calculate({ lat: position.coords.latitude, lng: position.coords.longitude });
             }, unavailable, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
-        } catch {
-            unavailable();
+        } catch (error) {
+            unavailable(error);
         }
     }
 

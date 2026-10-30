@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Equipment;
 use App\Models\School;
 use App\Models\SparePart;
+use App\Models\TechnicalVisit;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -71,6 +72,15 @@ class DashboardController extends Controller
         }
 
         return view('dashboard', [
+            'visitTimezone' => config('services.google_calendar.timezone'),
+            'upcomingVisits' => TechnicalVisit::visibleTo($user)
+                ->with(['ticket.school', 'technician'])
+                ->where('estado', 'programada')
+                ->where('fin', '>', now('UTC'))
+                ->orderBy('inicio')
+                ->orderBy('id')
+                ->limit(4)
+                ->get(),
             'monthlyActivity' => $monthlyActivity,
             'openTotal' => (clone $openTickets)->count(),
             'unassignedTotal' => (clone $openTickets)->whereNull('tecnico_asignado_id')->count(),

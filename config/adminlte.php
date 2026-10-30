@@ -154,7 +154,7 @@ return [
 
     'layout_topnav' => null,
     'layout_boxed' => null,
-    'layout_fixed_sidebar' => null,
+    'layout_fixed_sidebar' => true,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
     'layout_dark_mode' => null,
@@ -313,11 +313,11 @@ return [
         ['text'=>'Nueva solicitud','route'=>'tickets.create','icon'=>'fas fa-fw fa-plus-circle'],
         ['text'=>'Equipos','route'=>'equipment.index','icon'=>'fas fa-fw fa-desktop'],
         ['text'=>'Mapa de unidades','route'=>'map.index','icon'=>'fas fa-fw fa-map-marked-alt'],
+        ['text'=>'Unidades educativas','route'=>'schools.index','icon'=>'fas fa-fw fa-school','can'=>'staff'],
         ['text'=>'Repuestos','route'=>'spare-parts.index','icon'=>'fas fa-fw fa-tools','can'=>'staff'],
         ['text'=>'Notificaciones','route'=>'notifications.index','icon'=>'fas fa-fw fa-bell'],
         ['text'=>'Reportes','route'=>'reports.index','icon'=>'fas fa-fw fa-file-chart-line'],
         ['header' => 'ADMINISTRACIÓN','can'=>'admin'],
-        ['text'=>'Unidades educativas','route'=>'schools.index','icon'=>'fas fa-fw fa-school','can'=>'admin'],
         ['text'=>'Usuarios','route'=>'users.index','icon'=>'fas fa-fw fa-users-cog','can'=>'admin'],
     ],
 

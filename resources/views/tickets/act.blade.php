@@ -47,6 +47,11 @@
             <b>Serie:</b> {{ $ticket->equipment->serial_number }} &nbsp;
             <b>Ubicación:</b> {{ $ticket->equipment->location }}
         </section>
+    @elseif($ticket->equipment_brand)
+        <section class="box">
+            <h2>IDENTIFICACIÓN DEL EQUIPO</h2>
+            <b>Marca:</b> {{ $ticket->equipment_brand }}
+        </section>
     @endif
 
     <section class="box">

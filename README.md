@@ -15,8 +15,8 @@ Aplicación Laravel 12 para la Jefatura de Educación del Gobierno Autónomo Mun
 Clona el proyecto e instala las dependencias PHP desde su carpeta:
 
 ```bash
-git clone https://github.com/Luis2-d/Sistema_de_gestion_escolar.git
-cd Sistema_de_gestion_escolar
+git clone https://github.com/Luis2-d/Gestion_de_seguimiento_APIS-.git
+cd Gestion_de_seguimiento_APIS-
 composer install
 php -r "file_exists('.env') || copy('.env.example', '.env');"
 ```
@@ -71,3 +71,9 @@ El sembrado crea estas cuentas para probar el sistema. Todas utilizan la contras
 3. El técnico cambia estados y registra diagnóstico, solución y repuestos.
 4. Al marcarla como solucionada, el director recibe una notificación.
 5. El historial conserva todos los cambios e intervenciones.
+
+## Publicación en InfinityFree
+
+La [guía de publicación](deploy/infinityfree/README.md) incluye preparación del paquete, configuración privada, importación de MySQL, transferencia y verificación. Ejecuta `deploy/infinityfree/preparar.ps1` para generar una copia de producción dentro de `output/infinityfree/`, conservando el entorno de desarrollo. Los archivos generados, SQL y secretos quedan excluidos de Git.
+
+El [informe de la actividad 17](documentos/Informe_Publicacion_InfinityFree_BORRADOR.docx) es un borrador con resultados locales comprobados; la URL, las capturas y la verificación del hosting se completan después del despliegue real.

@@ -131,3 +131,70 @@
         min-height: 320px;
     }
 }
+
+/* Controles y textos del mapa adaptados al ancho disponible. */
+.map-location-focus > .text-left {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.map-location-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    margin-top: .5rem;
+    padding-left: 3rem;
+}
+
+.school-map .leaflet-popup-content {
+    max-width: calc(100vw - 100px);
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+    .map-route-panel {
+        padding: .75rem;
+    }
+
+    .map-route-actions .btn,
+    .map-location-actions .btn,
+    .map-location-focus,
+    [data-map-search-overview] {
+        min-height: 44px;
+    }
+
+    .map-location-actions {
+        padding-left: 0;
+    }
+
+    .map-location-list {
+        max-height: 50vh;
+    }
+
+    .school-map--overview {
+        height: 55vh;
+        height: 55svh;
+        min-height: 300px;
+        max-height: 460px;
+    }
+
+    .school-map .leaflet-control-zoom a {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+    }
+
+    .school-map .leaflet-control-layers label {
+        display: flex;
+        align-items: center;
+        gap: .35rem;
+        min-height: 36px;
+        margin: 0;
+    }
+
+    .school-map .leaflet-control-layers input {
+        margin: 0;
+    }
+}
